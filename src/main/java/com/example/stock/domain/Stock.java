@@ -23,7 +23,7 @@ public class Stock {
         return quantity;
     }
 
-    public void decrease(long quantity) {
+    public synchronized void decrease(long quantity) {
         if (quantity > this.quantity) {
             throw new RuntimeException("재고보다 큰 값");
         }

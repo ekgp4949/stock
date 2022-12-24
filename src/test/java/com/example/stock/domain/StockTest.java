@@ -34,17 +34,18 @@ class StockTest {
     }
 
     @Test
-    @Disabled
     void decreaseQuantityOnMultiThread() throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
-        CountDownLatch countDownLatch = new CountDownLatch(100);
+        CountDownLatch countDownLatch = new CountDownLatch(1000);
 
-        for(int i = 0; i < 100; i++) {
-            try {
-                executorService.submit(() -> stock.decrease(1L));
-            } finally {
-                countDownLatch.countDown();
-            }
+        for(int i = 0; i < 1000; i++) {
+            executorService.submit(() -> {
+                try {
+                    stock.decrease(1L);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
         }
 
         countDownLatch.await();
