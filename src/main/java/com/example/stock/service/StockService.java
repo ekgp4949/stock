@@ -3,8 +3,7 @@ package com.example.stock.service;
 import com.example.stock.domain.Stock;
 import com.example.stock.repository.StockRepository;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class StockService {
@@ -15,9 +14,10 @@ public class StockService {
         this.stockRepository = stockRepository;
     }
 
+    @Transactional
     public void decrease(Long id, Long quantity) {
-        Stock stock = stockRepository.findById(id).orElseThrow();
-
-
+        Stock stock = stockRepository.findByIdWithPessimisticLock(id).orElseThrow();
+        stock.decrease(quantity);
+        stockRepository.saveAndFlush(stock);
     }
 }
