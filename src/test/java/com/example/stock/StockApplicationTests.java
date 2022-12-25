@@ -1,6 +1,7 @@
 package com.example.stock;
 
 import com.example.stock.domain.Stock;
+import com.example.stock.facade.LettuceLockStockFacade;
 import com.example.stock.repository.StockRepository;
 import com.example.stock.service.StockService;
 import org.assertj.core.api.Assertions;
@@ -18,7 +19,7 @@ import java.util.concurrent.Executors;
 class StockApplicationTests {
 
     @Autowired
-    StockService stockService;
+    LettuceLockStockFacade stockService;
 
     @Autowired
     StockRepository stockRepository;
@@ -40,6 +41,8 @@ class StockApplicationTests {
             executorService.submit(() -> {
                 try {
                     stockService.decrease(1L, 1L);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 } finally {
                     countDownLatch.countDown();
                 }
